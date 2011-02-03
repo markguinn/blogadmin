@@ -1,0 +1,52 @@
+#Root_Content {
+	min-width: 810px;
+}
+
+.left_column_fields {
+	margin-right: 170px;
+	min-width: 620px;
+}
+
+.right_column_fields {
+	position: absolute;
+	right: 10px;
+	top: 12px;
+	width: 175px;
+}
+
+.field-Live, .CommentsCount {
+	text-align: center;
+}
+
+.filterBox .fieldgroupField {
+	padding-right: 10px;
+}
+
+.filterBox .text.virgin {
+	color: #888;
+}
+
+.TableListField table thead th.Status span {
+	display:block;
+	text-align: center;
+}
+
+.TableListField table thead th.CommentsCount span {
+	display: block;
+	background: url('../images/comments.png') no-repeat center center;
+	min-width:20px;
+}
+
+.TableListField table tbody tr td.CommentsCount {
+	background: url('../images/comments.png') no-repeat center center;
+}
+
+.CommentsCount a {
+	text-decoration: none;
+	color: #000;
+}
+
+.right form #Form_TagsForm_Tags .middleColumn,
+.right form #Form_CategoryForm_Categories .middleColumn {
+	background: none;
+}

@@ -1,0 +1,13 @@
+Index: cms/code/CMSMain.php
+===================================================================
+--- cms/code/CMSMain.php	(revision 103520)
++++ cms/code/CMSMain.php	(revision )
+@@ -165,7 +165,7 @@
+ 		Versioned::prepopulate_versionnumber_cache("SiteTree", "Stage");
+ 		Versioned::prepopulate_versionnumber_cache("SiteTree", "Live");
+ 
+-		return $this->getSiteTreeFor("SiteTree");
++		return $this->getSiteTreeFor("SiteTree", null, null, null, create_function('$n', 'return $n->ClassName != "BlogEntry";'));
+ 	}
+ 	
+ 	/**

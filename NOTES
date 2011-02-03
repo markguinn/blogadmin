@@ -1,0 +1,40 @@
+BlogAdmin Module
+0.1.0 alpha
+
+TODO:
+- create CategoriesWidget
+- create Authors widget
+- check bug with image fields
+- add new author should put it in the correct group
+- profile photo upload doesn't work
+- author and category filters don't actually seem to work (on frontend)
+
+(would be nice)
+- change extension classes to be named better (in a way that's less likely to clash)
+- urlsegment on categories should automatically populate (via js so it's more clear)
+- published/unpublished - make it clickable
+- resizable content area
+- better tag editing
+	- autocomplete
+	- clickable tag cloud
+- add/remove widgets from dashboard
+- make it look nicer
+- clean up author profile edit code
+- can we get rid of BlogProfile_Controller
+
+(longer term)
+- write tests
+- convert behaviour.js stuff to entwine
+- convert to modeladmin
+- fix SQL to be ansi compliant
+- test with postgre and php 5.3
+- clean up routing in BlogAdmin
+
+DEBT:
+- selection in the left sidebar doesn't update if you click Cancel or Add New Post buttons
+- cancel button doesn't go back to the same state - would lose sorting/paging
+- if you don't have admin access you can't actually edit/delete anything
+- datefield popups in the sidebar cause scrolling instead of appearing on the other side
+- most of the links don't work outside of an Ajax context
+- comment widgets on dashboard don't respect permissions
+- i think the unsaved fields message comes up on the blog list form and shouldn't

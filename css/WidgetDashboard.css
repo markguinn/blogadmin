@@ -1,0 +1,60 @@
+/* !----- main dashboard styles ----- */
+
+
+div.WidgetDashboard {
+	padding-bottom: 50px;
+}
+
+div.WidgetDashboard div.WidgetDashboardColumn {
+	width: 48%;
+	margin-right: 2%;
+	float: left;	
+	min-height: 400px;
+}
+
+
+/* !----- widgets ------ */
+
+
+div.WidgetDashboard div.Widget {
+	width: 100%;
+	border: 1px solid #bbb;
+	border-top: none;
+	margin-bottom: 10px;	
+}
+div.WidgetDashboard div.Widget h3 {
+	font-size: 12px;
+	color: #fff;
+	line-height: 1.8;
+	padding: 0 5px;
+	margin: 0;
+	cursor: move;
+	background: #000 url(../../cms/images/handled-bg.png) right top;
+}
+div.WidgetDashboard div.Widget table {
+	width: 100%;
+	border-collapse: collapse;
+}
+div.WidgetDashboard div.Widget table th {
+	background: #ddd;
+	padding: 3px;
+	border-bottom: #bbb solid 1px;
+	text-align: left;
+}
+div.WidgetDashboard div.Widget table td {
+	padding: 3px;
+	background: #fff;
+}
+
+
+/* !----- placeholders ----- */
+
+
+div.WidgetDashboard div.Widget.ui-sortable-placeholder {
+	border: 1px dotted black; 
+	visibility: visible !important; 
+	height: 50px !important;
+}
+div.WidgetDashboard div.Widget.ui-sortable-placeholder * {
+	visibility: hidden; 
+}
