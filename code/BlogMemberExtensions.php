@@ -54,4 +54,33 @@ class BlogMemberExtensions extends DataObjectDecorator {
 		return rtrim($this->getOwner()->FirstName,' ').' '.$this->getOwner()->Surname;
 	}
 
+
+	/**
+	 * Is this member also a blog author?
+	 * @return bool
+	 */
+	function isBlogAuthor() {
+		if (BlogExtensions::$author_groups) {
+			return $this->getOwner()->inGroups( BlogExtensions::$author_groups );
+		} else {
+			return true;
+		}
+	}
+
+
+	/**
+	 * returns a SQLQuery that will give you only Members who are also authors
+	 */
+	static function author_query() {
+		if (BlogExtensions::$author_groups) {
+			$query = singleton('Member')->extendedSQL('', '', null,
+				'INNER JOIN "Group_Members" ON "Group_Members"."MemberID" = "Member"."ID" '
+					. ' AND "Group_Members"."GroupID" in (' . implode(',', BlogExtensions::$author_groups) .')');
+		} else {
+			$query = singleton('Member')->extendedSQL('', '', null,'');
+		}
+		
+		return $query;
+	}
+
 }

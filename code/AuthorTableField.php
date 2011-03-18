@@ -60,9 +60,11 @@ class AuthorTableField extends TableListField {
 		
 		$this->setPermissions(array('show','edit','delete'));
 
-		$query = (Permission::check('BLOGMANAGEMENT') || Permission::check('ADMIN'))
-			? singleton('Member')->extendedSQL('', '', null,'')
-			: singleton('Member')->extendedSQL('"ID" = '.Member::currentUserID(), '', null,'');
+		if (Permission::check('BLOGMANAGEMENT') || Permission::check('ADMIN')) {
+			$query = BlogMemberExtensions::author_query();
+		} else {
+			$query = singleton('Member')->extendedSQL('"ID" = '.Member::currentUserID(), '', null,'');
+		}
 		
 		$this->setCustomQuery($query);
 				
@@ -139,12 +141,13 @@ class AuthorTableField_Item extends TableListField_Item {
 	}
 
 	function DeleteLink() {
-		//return BlogAdmin::make_link('deletepost', $this->item->ID);
+		return BlogAdmin::make_link('deleteauthor', $this->item->ID);
 //		return Controller::join_links($this->Link(), "delete");
 	}
 
 
 	function Can($mode) {
+		if ($mode == 'Delete') return Permission::check('ADMIN');
 		return Permission::check('BLOGMANAGEMENT') || Permission::check('ADMIN')
 			   || $this->item->ID == Member::currentUserID();
 	}

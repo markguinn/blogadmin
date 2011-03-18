@@ -31,6 +31,7 @@ class BlogAdmin extends LeftAndMain {
 		'editpost',
 		'editauthor',
 		'deletepost',
+		'deleteauthor',
 		'save',
 		'doSavePost',
 		'doCancel',
@@ -66,11 +67,7 @@ class BlogAdmin extends LeftAndMain {
 	 * displays the dashboard screen
 	 */
 	function index(){
-		Requirements::javascript(BLOGADMIN_DIR . '/javascript/BlogTableField.js');
-		Requirements::css(BLOGADMIN_DIR . '/css/WidgetDashboard.css');
-		return array(
-			'EditForm' => $this->Dashboard(),
-		);
+		return $this->formResponse('Dashboard');
 	}
 
 
@@ -78,11 +75,7 @@ class BlogAdmin extends LeftAndMain {
 	 * displays a list of blog entries
 	 */
 	function posts(){
-		return $this->getLastFormIn(
-			$this->customise(array(
-				'EditForm' => $this->ListForm()
-			))->renderWith('BlogAdmin_right')
-		);
+		return $this->formResponse('ListForm');
 	}
 	
 
@@ -99,22 +92,27 @@ class BlogAdmin extends LeftAndMain {
 	 * displays the edit form
 	 */
 	function editpost($request) {
-		return $this->getLastFormIn(
-			$this->customise(array(
-				'EditForm' => $this->getEditForm((int)$request->param('ID'))
-			))->renderWith('BlogAdmin_right')
-		);
+		return $this->formResponse('EditForm', (int)$request->param('ID'));
 	}
 
 	/**
 	 * displays the author edit form
 	 */
 	function editauthor($request) {
-		return $this->getLastFormIn(
-			$this->customise(array(
-				'EditForm' => $this->getAuthorEditForm((int)$request->param('ID'))
-			))->renderWith('BlogAdmin_right')
-		);
+		return $this->formResponse('AuthorEditForm', (int)$request->param('ID'));
+	}
+	
+	
+	/**
+	 * either delete a member entirely (should that be allowed?)
+	 * or remove him/her from the author group
+	 */
+	function deleteauthor($request) {
+		$id = (int)$request->param('ID');
+		$member = DataObject::get_by_id('Member', $id);
+		if ($member && $member->ID != Member::currentUserID() && $member->canDelete()) {
+			$member->delete();
+		}
 	}
 	
 	/**
@@ -283,34 +281,21 @@ class BlogAdmin extends LeftAndMain {
 	 * displays the form to add a new blog
 	 */
 	function add(){
-		return $this->getLastFormIn(
-			$this->customise(array(
-				'EditForm' => $this->getEditForm()
-			))->renderWith('BlogAdmin_right')
-		);
+		return $this->formResponse('EditForm');
 	}
 
 	/**
 	 * displays the form to add a new author
 	 */
 	function addauthor(){
-		return $this->getLastFormIn(
-			$this->customise(array(
-				'EditForm' => $this->getAuthorEditForm()
-			))->renderWith('BlogAdmin_right')
-		);
+		return $this->formResponse('AuthorEditForm');	
 	}
-	
 	
 	/**
 	 * displays a list of tags and allows you to add/edit tags
 	 */
 	function tags(){
-		return $this->getLastFormIn(
-			$this->customise(array(
-				'EditForm' => $this->TagsForm()
-			))->renderWith('BlogAdmin_right')
-		);
+		return $this->formResponse('TagsForm');	
 	}
 	
 	
@@ -318,22 +303,14 @@ class BlogAdmin extends LeftAndMain {
 	 * displays a list of categories and allows you to add/edit them
 	 */
 	function categories(){
-		return $this->getLastFormIn(
-			$this->customise(array(
-				'EditForm' => $this->CategoryForm()
-			))->renderWith('BlogAdmin_right')
-		);
+		return $this->formResponse('CategoryForm');	
 	}
 	
 	/**
 	 * displays a list of authors and allows you to add/edit them
 	 */
 	function authors(){
-		return $this->getLastFormIn(
-			$this->customise(array(
-				'EditForm' => $this->AuthorForm()
-			))->renderWith('BlogAdmin_right')
-		);
+		return $this->formResponse('AuthorForm');	
 	}
 	
 	
@@ -341,8 +318,12 @@ class BlogAdmin extends LeftAndMain {
 	
 
 	public function EditForm() {
+		$form = Session::get('BlogAdmin.EditForm');
+		$id = Session::get('BlogAdmin.EditID');
+
 		// routing hacks
 		// !TODO - clean this up. this is a terrible mess
+		if ($form && $form != 'EditForm') return $this->$form();
 		if (isset($_REQUEST['IsDashboard'])) return $this->Dashboard();
 		if (isset($_REQUEST['IsAuthor'])) return $this->getAuthorEditForm(isset($_REQUEST['ID']) ? $_REQUEST['ID'] : false);
 		if (isset($_REQUEST['action_redirectToAddAuthorForm'])) return $this->AuthorForm();
@@ -355,16 +336,18 @@ class BlogAdmin extends LeftAndMain {
 			$record = $this->currentPage();
 			if(!$record) return false;
 			if($record && !$record->canView()) return Security::permissionFailure($this);
+			$id = $this->currentPageID();
+		} else {
 		}
 
-		return $this->getEditForm($this->currentPageID());
+		return $this->getEditForm($id);
 	}
 
 
 	/**
 	 * returns the edit form based on an id from any source
 	 */
-	function getEditForm($id=false){
+	function getEditForm($id=false) {
 		$entry = $this->currentRecord = $id ? DataObject::get_by_id('BlogEntry', $id) : singleton('BlogEntry');
 
 		// start with our own default fields
@@ -386,9 +369,7 @@ class BlogAdmin extends LeftAndMain {
 		
 		// load up the data if needed
 		if ($id) {
-			if (!$_POST) {
-				$form->loadDataFrom($entry);
-			}
+			$form->loadDataFrom($entry);
 		} else {
 			// this allows the UpdateURL js to correctly change the urlsegment
 			// the first time the title is updated
@@ -406,7 +387,8 @@ class BlogAdmin extends LeftAndMain {
 	/**
 	 * returns the author edit form based on an id from any source
 	 */
-	function getAuthorEditForm($id=false){
+	function AuthorEditForm() {
+		$id = Session::get('BlogAdmin.EditID');
 		$author = $this->currentRecord = $id ? DataObject::get_by_id('Member', $id) : singleton('Member');
 
 		// start with our own default fields
@@ -431,9 +413,7 @@ class BlogAdmin extends LeftAndMain {
 		
 		// load up the data if needed
 		if ($id) {
-			if (!$_POST) {
-				$form->loadDataFrom($author);
-			}
+			$form->loadDataFrom($author);
 		} else {
 			// this allows the UpdateURL js to correctly change the urlsegment
 			// the first time the title is updated
@@ -451,7 +431,7 @@ class BlogAdmin extends LeftAndMain {
 	/**
 	 * creates the list form for editing entries
 	 */
-	function ListForm(){
+	function ListForm() {
 		if (self::use_categories()) {
 			BlogExtensions::$category_list_format = '<a class="filterLink categoryFilter" href="admin/blog/ListForm/field/Entries?ctf[filter][CategoryID]=$ID">$Title</a>';
 		}
@@ -637,6 +617,23 @@ class BlogAdmin extends LeftAndMain {
 	
 	// !------- general -------
 	
+
+	/**
+	 * provide an easy way for the various actions to respond in an intelligent way
+	 */	
+	protected function formResponse($form=false, $id=false){
+		Session::set('BlogAdmin.EditForm', $form);
+		Session::set('BlogAdmin.EditID', $id);
+		
+		if (Director::is_ajax()) {
+			return $this->getLastFormIn( $this->renderWith('BlogAdmin_right') );
+		} else {
+			Requirements::javascript(BLOGADMIN_DIR . '/javascript/BlogTableField.js');
+			Requirements::css(BLOGADMIN_DIR . '/css/WidgetDashboard.css');
+			return array();
+		}
+	}
+	
 	
 	/**
 	 * creates the kind of blog editing form we want, not
@@ -755,7 +752,8 @@ class BlogAdmin extends LeftAndMain {
 		
 		//return $old;
 		
-		$fields->addFieldToTab("Root.Main",new SimpleImageField('BlogProfilePhoto','Profile Photo'));
+//		$fields->addFieldToTab("Root.Main",new SimpleImageField('BlogProfilePhoto','Profile Photo'));
+		$fields->addFieldToTab("Root.Main",new FileIFrameField('BlogProfilePhoto','Profile Photo'));
 
 			//$fields->push(
 			//new LiteralField('', '<div class="left_column_fields">'),

@@ -4,9 +4,7 @@ BlogAdmin Module
 TODO:
 - create CategoriesWidget
 - create Authors widget
-- check bug with image fields
 - add new author should put it in the correct group
-- profile photo upload doesn't work
 - author and category filters don't actually seem to work (on frontend)
 
 (would be nice)

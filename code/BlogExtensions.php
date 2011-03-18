@@ -173,7 +173,7 @@ class BlogExtensions extends DataObjectDecorator {
 		if (self::$author_groups) {
 			return DataObject::get(
 				'Member',
-				"\"GroupID\" IN (" . implode(',', $author_groups) . ")" . ($filters ? " AND $filters" : ""),
+				"\"GroupID\" IN (" . implode(',', self::$author_groups) . ")" . ($filters ? " AND $filters" : ""),
 				$sort,
 				"INNER JOIN \"Group_Members\" ON \"MemberID\"=\"Member\".\"ID\""
 			);
