@@ -50,3 +50,7 @@
 .right form #Form_CategoryForm_Categories .middleColumn {
 	background: none;
 }
+
+#Categories .optionset li.b-lft, #Categories .optionset li.b-top {
+	border: none;
+}

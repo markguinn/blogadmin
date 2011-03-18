@@ -87,7 +87,7 @@ class BlogTreeExtensions extends DataObjectDecorator {
 	 * Check if the category exists.
 	 * If it does - set the CustomEntryList with it's entries
 	 **/
-	 	function category() {
+ 	function category() {
 
 			$URLSegment = Director::urlParam('URLSegment');
 			$URLCategory = Director::urlParam('ID');
@@ -110,7 +110,11 @@ class BlogTreeExtensions extends DataObjectDecorator {
 				$this->CustomEntryList = '';
 			}
 			
-			return $this->owner;
+		return array(
+			'SelectedCategory' => $category,
+			'CustomBlogEntries' => $this->CustomEntryList,
+			'BlogEntries' => $this->CustomEntryList,
+		);
 	}
 	
 
