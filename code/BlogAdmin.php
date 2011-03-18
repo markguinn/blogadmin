@@ -328,6 +328,7 @@ class BlogAdmin extends LeftAndMain {
 		if (isset($_REQUEST['IsAuthor'])) return $this->getAuthorEditForm(isset($_REQUEST['ID']) ? $_REQUEST['ID'] : false);
 		if (isset($_REQUEST['action_redirectToAddAuthorForm'])) return $this->AuthorForm();
 		if (isset($_REQUEST['action_redirectToAddForm'])) return $this->ListForm();
+		if (isset($_REQUEST['action_deleteSelected'])) return $this->ListForm();
 
 		// Include JavaScript to ensure HtmlEditorField works.
 		HtmlEditorField::include_js();
